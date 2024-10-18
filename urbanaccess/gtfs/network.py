@@ -422,8 +422,7 @@ def _trip_schedule_selector(input_trips_df, input_calendar_df,
                         'and string: {} for GTFS feed(s): {}.'.format(
                          cnt_subset_result, col_name_key, text, feed_id_list))
 
-                    subset_result_df = subset_result_df.append(subset_result)
-
+                    subset_result_df = pd.concat([subset_result_df, subset_result], ignore_index=True)
         subset_result_df.drop_duplicates(inplace=True)
         subset_result_df = subset_result_df[['unique_service_id']]
 
@@ -433,7 +432,8 @@ def _trip_schedule_selector(input_trips_df, input_calendar_df,
         log('An additional {:,} service_id(s) were extracted from '
             'calendar_dates. Total service_id(s) extracted: {:,}.'.format(
              num_caldates_service_ids_extracted, tot_service_ids_extracted))
-        service_ids_df = service_ids_df.append(subset_result_df)
+        
+        service_ids_df = pd.concat([service_ids_df, subset_result], ignore_index=True)
         service_ids_df.drop_duplicates(inplace=True)
 
     if service_ids_df.empty:
