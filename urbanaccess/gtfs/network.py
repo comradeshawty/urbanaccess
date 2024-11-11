@@ -871,17 +871,22 @@ def _format_transit_net_edge(stop_times_df, time_aware=False):
                     tmp_trip_df['arrival_time'].iloc[1:].values
             })
         else:
-            edge_df = pd.DataFrame({
-                "node_id_from": tmp_trip_df['unique_stop_id'].iloc[:-1].values,
-                "node_id_to": tmp_trip_df['unique_stop_id'].iloc[1:].values,
-                "weight": tmp_trip_df['timediff'].iloc[1:].values,
-                "unique_agency_id":
-                    tmp_trip_df['unique_agency_id'].iloc[1:].values,
-                # set unique trip ID without edge order to join other data
-                # later
-                "unique_trip_id": trip
-            })
+            if len(tmp_trip_df['unique_stop_id']) > 1:
+                print(len(tmp_trip_df['unique_stop_id'].iloc[:-1]))
+                print(len(tmp_trip_df['unique_stop_id'].iloc[1:]))
 
+                edge_df = pd.DataFrame({
+                    "node_id_from": tmp_trip_df['unique_stop_id'].iloc[:-1].values,
+                    "node_id_to": tmp_trip_df['unique_stop_id'].iloc[1:].values,
+                    "weight": tmp_trip_df['timediff'].iloc[1:].values,
+                    "unique_agency_id":
+                        tmp_trip_df['unique_agency_id'].iloc[1:].values,
+                    # set unique trip ID without edge order to join other data
+                    # later
+                    "unique_trip_id": trip
+                })
+            else:
+                continue
         # Set current trip ID to edge ID column adding edge order at
         # end of string
         edge_df['sequence'] = (edge_df.index + 1).astype(int)
